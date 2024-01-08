@@ -31,8 +31,11 @@ write.csv(cluster_count, paste0(out_dir, 'Aging_vs_Young/', 'cluster_count.csv')
 de_markers <- function(object, cluster_1, cluster_2, file_name)
 {
   markers <- FindMarkers(object, ident.1 = cluster_1, ident.2 = cluster_2,
-                         logfc.threshold =0, min.pct = 0)
-  write.csv(markers,paste0(out_dir, 'Aging_vs_Young/', 'aggr_', file_name, '.csv'))
+                         logfc.threshold = 0, min.pct = 0)
+  write.csv(markers, paste0(out_dir, 'Aging_vs_Young/', 'aggr_', file_name, '.csv'))
+  markers_filter <- markers  %>%
+    filter(p_val_adj < 0.05, avg_log2FC > 0.25 | avg_log2FC < -0.25, pct.1 > 0.1, pct.2 > 0.1)
+  write.csv(markers_filter, paste0(out_dir, 'Aging_vs_Young/', 'aggr_', file_name, '_filter.csv'))
 }
 # All clusters in Aging vs. All clusters in Young
 YAP_clustes <- c('Acinar_Young_AAP1', 'Acinar_Young_AAP2', 'Islet_Young_AAP1', 'Islet_Young_AAP2', 'Stroma_Young_AAP1', 'Stroma_Young_AAP2')
@@ -44,7 +47,7 @@ de_markers(sample_merge, c('Islet_Aging_AAP1', 'Islet_Aging_AAP2'), c('Islet_You
 de_markers(sample_merge, c('Stroma_Aging_AAP1', 'Stroma_Aging_AAP2'), c('Stroma_Young_AAP1', 'Stroma_Young_AAP2'), 'Stroma_AAP_vs_YAP')
 #---- Dotplot ------------------------------------------------------------------
 # Generate data
-degs <- read.csv(paste0(out_dir, 'Aging_vs_Young/', 'Selected_DEG_31.csv'))
+degs <- read.csv(paste0(out_dir, 'Aging_vs_Young/', 'Selected_DEG.csv'))
 load_data <- function(file_name,cluster)
 {
   df <- read.csv(paste0(out_dir, 'Aging_vs_Young/', file_name)) %>%
@@ -59,18 +62,17 @@ aggr_all <- load_data('aggr_AAP_vs_YAP.csv', 'All Clusters')
 aggr_Acinar <- load_data('aggr_Acinar_AAP_vs_YAP.csv', 'Acinar')
 aggr_Islet <- load_data('aggr_Islet_AAP_vs_YAP.csv', 'Islet')
 aggr_Stroma <- load_data('aggr_Stroma_AAP_vs_YAP.csv' ,'Stroma')
-data <- rbind(aggr_all, aggr_Acinar, aggr_Islet, aggr_Stroma)
-#%>%
-#  filter(FDR < 0.05, Log2FC > 0.25 | Log2FC < -0.25)
+data <- rbind(aggr_all, aggr_Acinar, aggr_Islet, aggr_Stroma) %>%
+  filter(FDR < 0.05, Log2FC > 0.25 | Log2FC < -0.25)
 data$type <- factor(data$type, levels = c('All Clusters', 'Acinar', 'Stroma', 'Islet'))
-data$genes <- factor(data$genes, levels = rev(degs$genes))
-write.csv(data, paste0(out_dir, 'Aging_vs_Young/', 'dotplot_31.csv'), row.names = FALSE)
+data$genes <- factor(data$genes, levels = rev(unique(data$genes)))
+write.csv(data, paste0(out_dir, 'Aging_vs_Young/', 'dotplot.csv'), row.names = FALSE)
 # Generate the figure
 p <- ggplot(data, aes(x = type, y = genes, color = Log2FC, size = -log10(FDR))) + 
   geom_point() +
   theme_bw() +
-  labs(x = expression("Aging"^"AAP" ~ "vs." ~ "Young"^"AAP"), y = 'Differentially Expressed Genes') +
-  scale_size_continuous(breaks=c(5,10,50,100)) +
+  labs(x = 'Aging_AAP vs. Young_AAP', y = 'Differentially Expressed Genes') +
+  scale_size_continuous(breaks=c(5, 10, 50, 100)) +
   scale_color_gradient2(low = "blue4", mid = 'white', high = "red2", midpoint = 0) +
   theme(legend.text = element_text(size = 25),
         legend.title = element_text(size = 25),
@@ -79,4 +81,4 @@ p <- ggplot(data, aes(x = type, y = genes, color = Log2FC, size = -log10(FDR))) 
         axis.title.y = element_text(size = 25),
         axis.text.x = element_text(angle = 60, vjust = 0.5, size = 20),
         axis.text.y = element_text(size = 20))
-ggsave(paste0(out_dir, 'Aging_vs_Young/', 'dotplot_31.png'), width=10, height=12)
+ggsave(paste0(out_dir, 'Aging_vs_Young/', 'dotplot.tiff'), width=10, height=12, compression = "lzw")

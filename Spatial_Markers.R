@@ -24,25 +24,25 @@ spatial_feature <- function(object, feature, min, max)
     scale_fill_gradientn(colours=c('blue', 'white', 'red'),limits=c(min, max),oob=scales::squish) + 
     ggtitle('') +
     theme(legend.text=element_text(size=30), legend.title=element_text(size=30), legend.key.size = unit(2, 'cm'))
-  ggsave(paste0(out_dir, 'markers/', feature, '/Young_AAP2_spatial_', feature, '.png'), width=8, height=8)
+  ggsave(paste0(out_dir, 'markers/', feature, '/Young_AAP2_spatial_', feature, '.tiff'), width=8, height=8, compression = "lzw")
   
   p_2 <- p[[2]] + 
     scale_fill_gradientn(colours=c('blue', 'white', 'red'),limits=c(min, max),oob=scales::squish) + 
     ggtitle('') +
     theme(legend.text=element_text(size=30), legend.title=element_text(size=30), legend.key.size = unit(2, 'cm'))
-  ggsave(paste0(out_dir, 'markers/', feature, '/Aging_AAP2_spatial_',feature,'.png'), width=8, height=8)
+  ggsave(paste0(out_dir, 'markers/', feature, '/Aging_AAP2_spatial_',feature,'.tiff'), width=8, height=8, compression = "lzw")
   
   p_3 <- p[[3]] + 
     scale_fill_gradientn(colours=c('blue', 'white', 'red'),limits=c(min, max),oob=scales::squish) + 
     ggtitle('') +
     theme(legend.text=element_text(size=30), legend.title=element_text(size=30), legend.key.size = unit(2, 'cm'))
-  ggsave(paste0(out_dir, 'markers/', feature, '/Young_AAP1_spatial_',feature,'.png'), width=8, height=8)
+  ggsave(paste0(out_dir, 'markers/', feature, '/Young_AAP1_spatial_',feature,'.tiff'), width=8, height=8, compression = "lzw")
   
   p_4 <- p[[4]] + 
     scale_fill_gradientn(colours=c('blue', 'white', 'red'),limits=c(min, max),oob=scales::squish) + 
     ggtitle('') +
     theme(legend.text=element_text(size=30), legend.title=element_text(size=30), legend.key.size = unit(2, 'cm'))
-  ggsave(paste0(out_dir, 'markers/', feature, '/Aging_AAP1_spatial_',feature,'.png'), width=8, height=8)
+  ggsave(paste0(out_dir, 'markers/', feature, '/Aging_AAP1_spatial_',feature,'.tiff'), width=8, height=8, compression = "lzw")
 }
 #---- Violin plot --------------------------------------------------------------
 vlnplot <- function(object, feature)
@@ -56,7 +56,7 @@ vlnplot <- function(object, feature)
           axis.text.x = element_text(size = 20),
           axis.text.y = element_text(size = 20),
           plot.title = element_text(size = 25))
-  ggsave(paste0(out_dir, 'markers/', feature, '/aggr_violin_', feature, '.png'), width=10, height=6)
+  ggsave(paste0(out_dir, 'markers/', feature, '/aggr_violin_', feature, '.tiff'), width=10, height=6, compression = "lzw")
 }
 #---- Feature Plot -------------------------------------------------------------
 feature_plot <- function(object,feature)
@@ -70,7 +70,7 @@ feature_plot <- function(object,feature)
           axis.text.x = element_text(size = 20),
           axis.text.y = element_text(size = 20),
           plot.title = element_text(size = 25))
-  ggsave(paste0(out_dir, 'markers/', feature, '/aggr_feature_', feature,'.png'), width=8, height=7)
+  ggsave(paste0(out_dir, 'markers/', feature, '/aggr_feature_', feature, '.tiff'), width=8, height=7, compression = "lzw")
 }
 #---- Gene Plot ----------------------------------------------------------------
 gene_plot <- function(object, feature, min, max)
@@ -103,7 +103,6 @@ gene_plot(sample_merge, "Il6",-2,8)
 gene_plot(sample_merge, "Il10",-2,2)
 gene_plot(sample_merge, "Ptgs2",-2,8)
 gene_plot(sample_merge, "Hamp",-2,4)
-
 
 # Others
 gene_plot(sample_merge, "Rgs5",-3,7)

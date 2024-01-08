@@ -26,7 +26,10 @@ GO <- function(file)
                   maxGSSize = 500,
                   pAdjustMethod = "BH",
                   pvalueCutoff = 1)
-  write.csv(ego, paste0(out_dir, 'file/GO/', file, '_GO_Up.csv'),row.names = FALSE)
+  write.csv(ego, paste0(out_dir, 'file/GO/', file, '_GO_Up.csv'), row.names = FALSE)
+  ego_filter <- ego %>%
+    filter(qvalue < 0.05)
+  write.csv(ego_filter, paste0(out_dir, 'file/GO/', file, '_GO_Up_filter.csv'), row.names = FALSE)
   # down-regulated
   df_down <- df %>%
     filter(p_val_adj < 0.05, avg_log2FC < -0.25)
@@ -38,7 +41,10 @@ GO <- function(file)
                   maxGSSize = 500,
                   pAdjustMethod = "BH",
                   pvalueCutoff = 1)
-  write.csv(ego, paste0(out_dir, 'file/GO/', file, '_GO_Down.csv'),row.names = FALSE)
+  write.csv(ego, paste0(out_dir, 'file/GO/', file, '_GO_Down.csv'), row.names = FALSE)
+  ego_filter <- ego %>%
+    filter(qvalue < 0.05)
+  write.csv(ego_filter, paste0(out_dir, 'file/GO/', file, '_GO_Down_filter.csv'), row.names = FALSE)
 }
 # KEGG
 KEGG <- function(file)
@@ -73,6 +79,9 @@ KEGG <- function(file)
   ekegg <- subset(ekegg, select = -c(geneID))
   ekegg['gene_name'] <- gene_name
   write.csv(ekegg, paste0(out_dir, 'file/KEGG/', file, '_KEGG_Up.csv'), row.names = FALSE)
+  ekegg_filter <- ekegg %>%
+    filter(qvalue < 0.05)
+  write.csv(ekegg_filter, paste0(out_dir, 'file/KEGG/', file, '_KEGG_Up_filter.csv'), row.names = FALSE)
   # down-regulated
   data_down <- data %>%
     filter(p_val_adj < 0.05, avg_log2FC < -0.25)
@@ -98,6 +107,9 @@ KEGG <- function(file)
   ekegg <- subset(ekegg, select = -c(geneID))
   ekegg['gene_name'] <- gene_name
   write.csv(ekegg, paste0(out_dir, 'file/KEGG/', file, '_KEGG_Down.csv'), row.names = FALSE)
+  ekegg_filter <- ekegg %>%
+    filter(qvalue < 0.05)
+  write.csv(ekegg_filter, paste0(out_dir, 'file/KEGG/', file, '_KEGG_Down_filter.csv'), row.names = FALSE)
 }
 #---- Run ORA ------------------------------------------------------------------
 data <- c('aggr_AAP_vs_YAP', 'aggr_Acinar_AAP_vs_YAP', 'aggr_Islet_AAP_vs_YAP', 'aggr_Stroma_AAP_vs_YAP')
@@ -136,7 +148,7 @@ write.csv(data, paste0(out_dir, 'figure/', 'dotplot_top20_pathways.csv'), row.na
 p <- ggplot(data, aes(x = type, y = GO, color = -log10(FDR), size = size)) + 
   geom_point() +
   theme_bw() +
-  labs(x = expression("Aging"^"AAP" ~ "vs." ~ "Young"^"AAP"), y = 'GO') +
+  labs(x = expression("Aging_AAP vs. Young_AAP"), y = 'GO') +
   scale_size_continuous(breaks=c(10,30,50)) +
   scale_color_gradient(low = "blue", high = "red", breaks = c(5,10,15,20,25)) +
   theme(legend.text = element_text(size = 25),
@@ -146,7 +158,7 @@ p <- ggplot(data, aes(x = type, y = GO, color = -log10(FDR), size = size)) +
         axis.title.y = element_text(size = 25),
         axis.text.x = element_text(angle = 60, vjust = 0.5, size = 20),
         axis.text.y = element_text(size = 20))
-ggsave(paste0(out_dir, 'figure/', 'dotplot_top20_pathways.png'), width=16, height=12)
+ggsave(paste0(out_dir, 'figure/', 'dotplot_top20_pathways.tiff'), width=16, height=12, compression = "lzw")
 #---- GO - Gene-Concept Network ------------------------------------------------
 # GO: All Clusters
 df <- read.csv(paste0(in_dir, 'aggr_AAP_vs_YAP', '.csv'), row.names = 'X') %>%
@@ -197,4 +209,4 @@ p <- cnetplot(ego, color.params = list(foldChange = geneList), showCategory = 12
         axis.text.y = element_blank(),
         panel.grid = element_blank(),
         panel.border = element_blank())
-ggsave(paste0(out_dir, 'figure/', 'gene_concept_network_top12.png'), width=18, height=14)
+ggsave(paste0(out_dir, 'figure/', 'gene_concept_network_top12.tiff'), width=18, height=14, compression = "lzw")

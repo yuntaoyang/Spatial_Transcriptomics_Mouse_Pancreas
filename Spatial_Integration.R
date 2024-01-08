@@ -62,6 +62,8 @@ sample_merge <- RenameIdents(sample_merge,
                              "7" = 'C7')
 #---- Save the Seurat object ---------------------------------------------------
 saveRDS(sample_merge, file = paste0(root_dir, 'Seurat/', 'seurat_object.rds'))
+#---- Load the Seurat object ---------------------------------------------------
+sample_merge <- readRDS(file = paste0(root_dir, 'Seurat/', 'seurat_object.rds'))
 #---- UMAP plots ---------------------------------------------------------------
 umap <- function(object)
 {
@@ -72,7 +74,7 @@ umap <- function(object)
           axis.title.y = element_text(size = 30), 
           legend.text=element_text(size=20)) +
     guides(color = guide_legend(override.aes = list(size=20)))
-  ggsave(paste0(out_dir, 'aggr/', 'aggr', '_umap_clusters.png'), width=13, height=10)
+  ggsave(paste0(out_dir, 'aggr/', 'aggr', '_umap_clusters.tiff'), width=13, height=10, compression = "lzw")
   
   p_2 <- DimPlot(object, reduction = "umap", group.by = c("orig.ident"), pt.size = 1.5) +
     ggtitle('') +
@@ -80,7 +82,7 @@ umap <- function(object)
           axis.title.y = element_text(size = 30), 
           legend.text=element_text(size=20)) +
     guides(color = guide_legend(override.aes = list(size=20)))
-  ggsave(paste0(out_dir, 'aggr/', 'aggr', '_umap_samples.png'), width=13, height=10)
+  ggsave(paste0(out_dir, 'aggr/', 'aggr', '_umap_samples.tiff'), width=13, height=10, compression = "lzw")
 }
 umap(sample_merge)
 #---- t-SNE plots --------------------------------------------------------------
@@ -93,7 +95,7 @@ t_sne <- function(object)
           axis.title.y = element_text(size = 30), 
           legend.text=element_text(size=20)) +
     guides(color = guide_legend(override.aes = list(size=20)))
-  ggsave(paste0(out_dir, 'aggr/', 'aggr', '_tsne_clusters.png'), width=13, height=10)
+  ggsave(paste0(out_dir, 'aggr/', 'aggr', '_tsne_clusters.tiff'), width=13, height=10, compression = "lzw")
   
   p_2 <- DimPlot(object, reduction = "tsne", group.by = c("orig.ident"), pt.size = 1.5) +
     ggtitle('') +
@@ -101,7 +103,7 @@ t_sne <- function(object)
           axis.title.y = element_text(size = 30), 
           legend.text=element_text(size=20)) +
     guides(color = guide_legend(override.aes = list(size=20)))
-  ggsave(paste0(out_dir, 'aggr/', 'aggr', '_tsne_samples.png'), width=13, height=10)
+  ggsave(paste0(out_dir, 'aggr/', 'aggr', '_tsne_samples.tiff'), width=13, height=10, compression = "lzw")
 }
 t_sne(sample_merge)
 #---- Spatial Dim Plot ---------------------------------------------------------
@@ -116,7 +118,7 @@ spatial_dim(sample_merge)[[1]] +
   theme(legend.text=element_text(size=15),
         legend.title=element_text(size=15)) +
   guides(fill = guide_legend(override.aes = list(size=10)))
-ggsave(paste0(out_dir, 'aggr/', 'Young_AAP2_spatial_dim.png'), width=8, height=8)
+ggsave(paste0(out_dir, 'aggr/', 'Young_AAP2_spatial_dim.tiff'), width=8, height=8, compression = "lzw")
 
 spatial_dim(sample_merge)[[2]] +
   scale_color_manual(values = c("#F8766D","#B79F00","#7CAE00","#00BA38","#00BFC4","#00B4F0","#C77CFF")) +
@@ -124,14 +126,14 @@ spatial_dim(sample_merge)[[2]] +
   theme(legend.text=element_text(size=15),
         legend.title=element_text(size=15)) +
   guides(fill = guide_legend(override.aes = list(size=10)))
-ggsave(paste0(out_dir, 'aggr/', 'Aging_AAP2_spatial_dim.png'), width=8, height=8)
+ggsave(paste0(out_dir, 'aggr/', 'Aging_AAP2_spatial_dim.tiff'), width=8, height=8, compression = "lzw")
 spatial_dim(sample_merge)[[3]] +
   scale_color_manual(values = c("#F8766D","#B79F00","#7CAE00","#00BA38","#00BFC4","#00B4F0","#C77CFF")) +
   labs(title = '', fill = "Clusters") +
   theme(legend.text=element_text(size=15),
         legend.title=element_text(size=15)) +
   guides(fill = guide_legend(override.aes = list(size=10)))
-ggsave(paste0(out_dir, 'aggr/', 'Young_AAP1_spatial_dim.png'), width=8, height=8)
+ggsave(paste0(out_dir, 'aggr/', 'Young_AAP1_spatial_dim.tiff'), width=8, height=8, compression = "lzw")
 
 spatial_dim(sample_merge)[[4]] +
   scale_color_manual(values = c("#F8766D","#B79F00","#7CAE00","#00BA38","#00BFC4","#00B4F0","#C77CFF","#F564E3")) +
@@ -139,7 +141,7 @@ spatial_dim(sample_merge)[[4]] +
   theme(legend.text=element_text(size=15),
         legend.title=element_text(size=15)) +
   guides(fill = guide_legend(override.aes = list(size=10)))
-ggsave(paste0(out_dir, 'aggr/', 'Aging_AAP1_spatial_dim.png'), width=8, height=8)
+ggsave(paste0(out_dir, 'aggr/', 'Aging_AAP1_spatial_dim.tiff'), width=8, height=8, compression = "lzw")
 #---- Markers: one cluster vs. other clusters ----------------------------------
 markers_all <- FindAllMarkers(sample_merge, logfc.threshold = 0, min.pct = 0)
 for (i in split(markers_all, markers_all$cluster))
